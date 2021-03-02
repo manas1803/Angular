@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<br>
+<br>
+<br>
+<button class="btn btn-primary" (click) = "onClickDisplay($event)">Display Details</button>
+<p *ngIf = "displayPara">This paragraph is just a random paragraph containing some text so that we can toggle it while clicking on the Display Details button</p>
+<p *ngFor = "let logs of logArray" [ngStyle] = "{backgroundColor:(logs>=5) ? 'blue' : 'white'}" [ngClass] = "{colorChange:(logs)>=5}">{{logs}}</p>
