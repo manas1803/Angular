@@ -7,6 +7,15 @@
 - [Components](#components)
 - [Data Binding](#data-binding)
 - [Directives](#directives)
+
+## Components and Data Binding
+- [What is Angular](#what-is-angular)
+- [Creating first Angular Project](#creating-first-angular-project)
+- [How does an angular app gets loaded and started](#how-does-an-angular-app-gets-loaded-and-started)
+- [Components](#components)
+- [Data Binding](#data-binding)
+- [Directives](#directives)
+
 ---
 ## **What is Angular**
 
