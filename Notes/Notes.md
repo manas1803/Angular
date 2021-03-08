@@ -9,11 +9,11 @@
 - [Directives](#directives)
 
 ## Components and Data Binding
-- [What is Angular](#what-is-angular)
-- [Creating first Angular Project](#creating-first-angular-project)
-- [How does an angular app gets loaded and started](#how-does-an-angular-app-gets-loaded-and-started)
-- [Components](#components)
-- [Data Binding](#data-binding)
+- [Property and Event Binding](#property-and-event-binding)
+- [Binding to Custom Properties](#binding-to-custom-properties)
+- [Binding to Custom Events](#binding-to-custom-events)
+- [Getting Access to Template and DOM](#getting-access-to-template-and-dom)
+- [Component Life Cycle](#component-life-cycle)
 - [Directives](#directives)
 
 ---
@@ -67,7 +67,7 @@ We can create components in 2 ways. Manually or using angular cli.
 
 Angular cli method is more preferred as it gives us with reduced headache of referring modules and all but we should manual too.
 
-```
+```TypeScript
 ng generate component component-name-here
 ```
 
@@ -112,20 +112,20 @@ For two way data binding we use ngModel.
 We have simple syntax for the above.
 We just declare a method or variable in the ts file and when we have to call it in html we use curly braces.
 
-```
+```TypeScript
     {{variablenamehere}}
 ```
 **Property Binding**
 For property binding the simple point is that any html element have certain properties so if we wish to change them dynaically then we use property binding
 
-```
+```TypeScript
     [propertynamehere]="variablenamehere"
 ```
 
 **Event Binding**
 When we do any action or activity in the dom certain events get triggered. So on these trigger of events we can bind them to any variable or function method.
 
-```
+```TypeScript
     (click)="variablenamehere"
 ```
 
@@ -134,7 +134,7 @@ In case of two way binding we use a different kind of variable or system. Here w
 
 Now here when we bind tis variable name so if we update this in our dom it gets updated in the ts file too.
 
-```
+```TypeScript
     [(ngModel)] = "variablenamehere"
 ```
 
@@ -156,14 +156,14 @@ This directive is used to output the content in dom based on condition.
 Since it changes the structure of dom it is also called as structural directive. If the condition mentioned inside ngif becomes true then that element is seen else not.
 
 Syntax :-
-```
+```TypeScript
 *ngIf = "Condition or variable or a method here returning boolean value"
 ```
 >Here we use * before ngif as it is syntax that represents a structural directive 
 
 We can extend the ngif by also using else with it syntax for which is :-
 
-```
+```TypeScript
     *ngIf = "Condition or variable or a method here returning boolean value; else variable name to the other element"
 ```
 
@@ -177,7 +177,7 @@ If we want to dynamically change the style for any element then we use ngstyle.
 
 Syntax :-
 
-```
+```TypeScript
     [ngStyle] = "{backgroundColor:blue}"
 ```
 
@@ -192,7 +192,7 @@ Previously we saw how to change the style and properties of an element using ngs
 
 Same like ngStyle it also requires a javascript object to be passed and also we use [] brackets just like ngStyle.
 
-```
+```TypeScript
 [ngClass] = {classname:'condition or method here'}
 ```
 
@@ -207,7 +207,7 @@ Now if we want to list out an array of values in our elements we use ngFor just 
 It is also a structural directive so we use * with it.
 
 Syntax :
-```
+```TypeScript
 *ngFor = "let server of servers"
 ```
 
@@ -215,8 +215,8 @@ Here server is the variable provided by us to loop through the variable servers 
 
 > A very important point for ngFor. Since its a for loop sometimes in our code we want to access the index of the point of the loop where we are currently in the array. So either we can make a variable as count for that in our ts file or simply we can change the syntax a bit to get the index.
 
-```
-    *ngFor = "let server in servers; let i=index"
+```TypeScript
+*ngFor = "let server in servers; let i=index"
 ```
 
 > Now this i will have current position in the loop.It will start from 0 and so on.
@@ -225,6 +225,143 @@ Here server is the variable provided by us to loop through the variable servers 
 
 ---
 
+## **Property and Event Binding**
 
+We have already seen the built in property and event binding methods and ways in which that can be done effectively.
 
+Now if we create our own property and our own event and we need to communicate that across the components then we need to use some other methods.
 
+[^Top](#components-and-data-binding)
+
+---
+
+## **Binding to Custom Properties**
+We sometimes needs to communicate with the custom properties and need to send the data values from the parent component to the child component.
+
+For that purpose we use the keyword **@Input**
+
+Steps :-
+1. Let suppose we have one child component as server-element and our parent component is app.
+2. Now in parent component using ngFor we are looping through each server-element and calling it again and again to create list of components.
+3. But we have servers array object in app component only and not in server-element.
+4. So this will throw error as we don't have any server in server-element and we need to pass each server to server-element.
+5. Here we can use property binding.
+6. First we will create a property as element in server-element and then add a decorative of @Input before it.
+```TypeScript
+@Input() element = {name:string,type:string,content:string};
+```
+
+Now just like property binding syntax we will bind this property with each server element that we are looping through in ngFor
+
+```TypeScript
+*ngFor = "let server of servers" [element] = "server"
+```
+
+> We can have a parameter inside @Input() also and this parameter is the aliasing name given to the property
+
+[^Top](#components-and-data-binding)
+
+---
+
+## **Binding to Custom Events**
+Same way like we binded the custom properties we can bind the events too.
+
+In case of communicating from a child to parent we use **@Output()** decorater.
+
+Steps :- 
+1. Suppose we have child component as cockpit and parent is app.
+2. Now in this cockpit component when we click on add Server button a server is getting created.
+3. Now this was possible when we had all methods in app.ts but now we have a new child component.
+4. So now we create a custom event of onServerCreated in app component and then pass parameters of data values we want from that event.
+5. Then in cockpit component we create custom events and then we trigger them using .emit method.
+
+```TypeScript
+@Output() onServerCreate = new EventEmitter<Generic here>()
+```
+
+> Aliasing is followed here in the same way
+
+[^Top](#components-and-data-binding)
+
+---
+
+## **Getting Access to Template and DOM**
+We can access the template and dom in various ways as we have studied before, but we can do that in some other ways too.
+
+1. Local Variable Reference
+2. ViewChild() decorative
+
+**Local Variable Reference**
+
+For certain elements in our template we can assign a temporary variable
+
+```HTML
+#variablenamehere
+```
+
+This needs to be assigned inside the elements tag. Then we can use this variable anywhere in that template.
+
+> Note that we can use the variable only in the template and not in ts file.
+
+So next we can do is we can pass this as a parameter for any event we are referring to so that we can use it in ts file.
+
+The value this variable will store is the whole element it is referring to.
+
+```HTML
+<input type="text" #serverName>
+<button (click) = "serverMethods(serverName)"></button>
+```
+This variable will referr to the input element here.
+
+**Using ViewChild()**
+We have a decorative for the above purpose. The ViewChild() decorative enables us to referr to any element in the DOM in ts file.
+
+In this decorative inside parenthesis we mention any component or any variable that we have assigned to the template(just like in previous case).
+
+Then we assign this decorative to any variable we have created in the ts file.
+
+The variable returns eventRef as its type.
+
+```HTML
+<input type="text" #serverName>
+```
+Now in ts file we have
+
+```TypeScript
+@ViewChild('serverName') serverNameInput;
+```
+
+And now we can use this variable in the ts file.
+> The ViewChild() decorator has some different syntax for other versions of Angular so just check that accordingly. The part mentioned will be there.
+
+**ng-content** 
+(Read at last)
+
+[^Top](#components-and-data-binding)
+
+---
+
+## **Component Life Cycle**
+
+![component life cycle](Images/ComponentLifeCycle.jpg)
+
+### **Lifecycle**
+**ngOnChanges** Called after a bound input property changes
+
+**ngOnInit** Called once the component is initialized
+
+**ngDoCheck** Called during every change detection run
+
+**ngAfterContentInit** Called after content (ng-content) has been projected into view
+
+**ngAfterContentChecked** Called every time the projected content has been checked
+
+**ngAfterViewInit** Called after the component’s view (and child views) has been initialized
+
+**ngAfterViewChecked** Called every time the view (and child views) have been checked
+
+**ngOnDestroy** Called once the component is about to be destroyed
+
+[^Top](#components-and-data-binding)
+
+---
