@@ -16,6 +16,9 @@
 - [Component Life Cycle](#component-life-cycle)
 - [Directives](#directives)
 
+## Directives
+
+
 ---
 ## **What is Angular**
 
