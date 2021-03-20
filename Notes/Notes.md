@@ -544,8 +544,70 @@ export class BetterDirectiveDirective implements OnInit{
 ---
 
 ## **Structural Directives**
+There is an interesting point regarding the structural directives.
+
+In structural directives we have an '*' sign before them
+
+What actually happens behind the scene is 
+
+- When angular sees a directive with * sign it regards it as structural.
+- Angular creates a ng-template element that will surround the element to which the structural directive was added.
+- After that the directive is applied to this template as a property binding like all other directives are added.
+
+Eg :-
+
+```HTML
+<div *ngIf = "condition here">
+    <p>Hello World</p>
+</div>
+```
+This gets converted to 
+
+```HTML
+<ng-template [ngIf] = "condition here">
+    <div>
+        <p>Hello World</p>
+    </div>
+</ng-template>
+```
 
 [^Top](#directives)
 
 ---
 
+## **Creating Structural Directive**
+To create a structural directive first we create a directive like we have been.
+
+Then we follow some steps :-
+
+- Suppose we have to create a structural directive as unless opposite of ngIf
+- Its selector is appUnless
+- Then we create a set method(it is basically a property only) as appUnless for Input decorator
+> Here the name of property should be same as the selector
+ ```TYPESCRIPT
+ @Input() set appUnless(value:boolean){
+
+ }
+ ```
+- Here the value is the parameter which we will pass with the structural directive = sign.
+- Then we have to add some condition and according to that condition we need to add the view or clear it.
+- The view we need to add is that of the template(template because structural directive gets converted to ngtemplate behind the scenes)
+- To achieve this we create viewContainerRef and TemplateContainerRef in the constructor.
+- Then using the if and else condtion and the value we get from the html we add or remove the template.
+
+```TYPESCRIPT
+@Input() set appUnless(value:boolean){
+    if(!value){
+      this.vwC.createEmbeddedView(this.temRef);
+    }
+    else{
+      this.vwC.clear();
+    }
+ }
+ constructor(private vwC:viewContainerReference,private temRef:templateReference){}
+```
+- Now we can use this directive as ***appUnless** in our HTML file
+
+[^Top](#directives)
+
+---
