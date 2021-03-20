@@ -1,24 +1,39 @@
+<!DOCTYPE html>
 <div class="container">
   <div class="row">
     <div class="col-xs-12">
-      <button
-        class="btn btn-primary"
-        (click)="onlyOdd = !onlyOdd">Only show odd numbers</button>
+      <button class="btn btn-primary" (click)="onlyOdd = !onlyOdd">Only show odd numbers</button>
       <br><br>
       <ul class="list-group">
-        <div *ngIf = "onlyOdd">
-        <li
-          class="list-group-item" *ngFor = "let odd of oddNumbers">
-          {{odd}}
-        </li>
-      </div>
-    <div *ngIf = "!onlyOdd">
-        <li
-          class="list-group-item" *ngFor = "let even of evenNumbers">
-          {{even}}
-        </li>
-    </div>
+        <div *ngIf="onlyOdd">
+          <li class="list-group-item" [ngClass]="{odd:odd%2!==0}"
+            [ngStyle]="{'background-color':(odd%2!==0) ? 'orange' : 'yellow'}" *ngFor="let odd of oddNumbers">
+            {{odd}}
+          </li>
+        </div>
+        <div *ngIf="!onlyOdd">
+          <li class="list-group-item" [ngClass]="{even:odd%2!==0}"
+            [ngStyle]="{'background-color':(even%2!==0) ? 'orange' : 'yellow'}" *ngFor="let even of evenNumbers">
+            {{even}}
+          </li>
+        </div>
       </ul>
+      <p appBasicDirective>Using the basic directive to style!</p>
+      <p appBetterDirective [defaultColor]="'yellow'" [highlightColor]="'lightblue'">Using the better directive to
+        style!</p>
+      <div>
+        <p *appUnless='true'>Unless true</p>
+        <p *appUnless='false'>Unless False</p>
+      </div>
+      <div [ngSwitch] = "'value'">
+        <p *ngSwitchCase = "Monday">Today is Monday</p>
+        <p *ngSwitchCase = "Tuesday">Today is Tuesday</p>
+        <p *ngSwitchCase = "Wednesday">Today is Wednesday</p>
+        <p *ngSwitchCase = "Thursday">Today is Thursday</p>
+        <p *ngSwitchCase = "Friday">Today is Friday</p>
+        <p *ngSwitchCase = "Saturday">Today is Saturday</p>
+        <p *ngSwitchCase = "Sunday">Today is Sunday</p>
+      </div>
     </div>
   </div>
 </div>

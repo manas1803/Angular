@@ -14,10 +14,14 @@
 - [Binding to Custom Events](#binding-to-custom-events)
 - [Getting Access to Template and DOM](#getting-access-to-template-and-dom)
 - [Component Life Cycle](#component-life-cycle)
-- [Directives](#directives)
 
 ## Directives
-
+- [Recap of Directives](#recap-of-directives)
+- [Creating Basic Attribute Directive](#creating-basic-attribute-directive)
+- [Renderer](#renderer)
+- [HostListener](#hostlistener)
+- [HostBinding](#hostbinding)
+- [Structural Directives](#structural-directives)
 
 ---
 ## **What is Angular**
@@ -368,3 +372,180 @@ And now we can use this variable in the ts file.
 [^Top](#components-and-data-binding)
 
 ---
+
+## **Recap of Directives**
+We have certain built in directives. We already studied about them.
+
+**ngIf**
+
+- The ngIf is a structural directive
+- If we have certain condition according to which we want our elements to be displayed then we use ngif
+- Since ngif changes structure of the page they are called structural directives
+
+**ngFor**
+- It is also structural directive
+- Here we loop through an array and then using variables and index we can manipulate the html code
+- To get index after the ngFor we can add a variable after putting the '.'
+
+**ngStyle**
+- To dynamically add style to the element we use ngstyle.
+- It is not a structural directive
+- ngStyle expects a javascript object. The key is a property of style and value is its value
+
+**ngClass**
+- To add a class dynamically to an element then we use ngClass
+- It is also not a structural directive.
+- It also expects a javascript object and class is the key expecting a value or a condition.
+
+[^Top](#directives)
+
+---
+
+## **Creating Basic Attribute Directive**
+We can also create our own directive, for our own purposes. To create our directive we can use angular cli 
+
+```Typescript
+    ng g d directive-name-here
+```
+Once the directive is created we have @Directive decorator at the top.
+
+This decorator has one property of selector(as you know component is also a directive so same things apply). We declare the way we want to have the selection of the directive
+
+Next we can add the directive here, but for that we need to get the element to which we are applying this directive.
+
+We can get this easily in angular. We can use the elementRef in the constructor of the directive and then we can use the following code to style it 
+
+```TYPESCRIPT
+constructor(private eleRef:ElementRef){}
+ngOnInit(){
+    this.eleRef.nativeElement.style.backgroundColor = 'blue'
+}
+```
+
+> This approach is good but has one flaw as in angular the js files gets loaded in certain bundles and certain ways so in future it may be possible that this element doesn't get loaded but we are calling its property and hence throwing an error.
+
+[^Top](#directives)
+
+---
+
+## **Renderer**
+To avoid the above issue we mentioned we have renderer in angular that works in a better way.
+
+For this we create the directive as usual and then once the directive is created we then apply renderer to it in place of the element ref method
+
+```TYPESCRIPT
+constructor(private render:Renderer,private eleRef:ElementRef){}
+
+ngOninit(){
+    this.render.setStyle(element,style,property,flag)
+}
+```
+
+Now here if we have to change the style then we use the setStyle method. We have other methods also for the renderer.
+
+The first parameter it takes is element name and we can have it from elementRef.nativeElement.
+
+The second parameter is the style and we can add the style-property in that case.
+
+The third parameter is the value of this style property.
+
+The fourth parameter is the flag like !important and so on.
+
+> Renderer is a better approach to change the dom through ts file using directive.
+
+[^Top](#directives)
+
+---
+
+## **HostListener**
+Sometimes we also need to listen to certain events that occurs when any event occurs in the element to which our directive is pointing.
+
+For this purpose we have **HostListener.**
+
+Using hostlistener we listen to all the events that can occur in our element and according to that what we want to be done to our element.
+
+Like if we want to change the style when mouseover and then remove that style once mouseleave then we can achieve this using hostlistener.
+
+- First we create a decorator as hostlistener @Hostlistener
+
+- This decorator has one parameter that tells about the event we want to use.
+
+```TYPESCRIPT
+@Hostlistener('mouseenter')
+```
+- Next we have a method name that we want to execute when this event triggers.
+
+```TYPESCRIPT
+@Hostlistener('mouseenter') mouseEnter(eventData:Event){
+    this.render.setStyle(element,style,property,flag)
+}
+```
+> We can also get the data of the element in the parameters of the method we declare.
+
+Now when we mouse over the element then the above method executes thus making the property change on event trigger
+
+[^Top](#directives)
+
+---
+
+## **HostBinding**
+The render method is great but there we need to type the code a bit. So we have the hostbinding decorator for the purpose.
+
+- In case of HostBinding we have parenthesis that carries argument as string
+- In this argument we have to pass the property of the element which we want to change e.g. style.backgroundColor
+
+> We can have other properties here too.
+
+- Then we need to provide a variable name to this and its type i.e. how we want it to return as.
+
+```TYPESCRIPT
+@HostBinding('style.backgroundColor') backgroundColor:string;
+@HostListener('mouseenter') mouseover(eventData:Event){
+    this.backgroundColor='red';
+  }
+```
+
+It works same way as renderer but it is a bit easy to use and less code required.
+
+> Both renderer and hostbinding are good methods
+
+> We can use the @Input method to get the data input from the component itself and then bind that with the directive.
+
+```HTML
+<p appBetterDirective [defaultColor] = "'yellow'" [highlightColor] = "'lightblue'"> Using better way</p>
+```
+```TYPESCRIPT
+@Directive({
+  selector: '[appBetterDirective]'
+})
+export class BetterDirectiveDirective implements OnInit{
+  @Input() defaultColor:string = 'transparent';
+  @Input() highlightColor:string = 'blue';
+  constructor(private elementRef:ElementRef,private render:Renderer2) { }
+
+  @HostBinding('style.backgroundColor') backgroundColor:string;
+  ngOnInit(){
+    this.backgroundColor=this.defaultColor;
+  }
+  @HostListener('mouseenter') mouseover(eventData:Event){
+    this.backgroundColor=this.highlightColor;
+  }
+  @HostListener('mouseleave') mouseleave(eventData:Event){
+    this.backgroundColor=this.defaultColor;
+  }
+
+
+}
+```
+
+
+[^Top](#directives)
+
+---
+
+## **Structural Directives**
+
+[^Top](#directives)
+
+---
+
