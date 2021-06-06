@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +9,7 @@ export class AppComponent {
   serverElements = [{type:'server',name:'TestServer',content:'Just a test!'}];
   oddNumbers : number[] = [];
   evenNumbers : number[] = [];  
+  adminName;
   onServerAdded(serverData:{serverName:string,serverContent:string}) {
       this.serverElements.push({
         type: 'server',
@@ -29,5 +30,7 @@ export class AppComponent {
           this.evenNumbers.push(num);
        else
           this.oddNumbers.push(num);
+    }
+    adminUser(){
     }
 }

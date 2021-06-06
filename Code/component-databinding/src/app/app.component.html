@@ -28,4 +28,15 @@
       <app-even *ngFor = "let evenNumber of evenNumbers" [evenNum] = "evenNumber"></app-even>
     </div>
   </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="row">
+    <div class="col-xs-12">
+      <input type="text" #myname />
+      <button class="btn btn-primary" (click) = "adminUser()">Submit</button>
+      <p>{{adminName}}</p>
+    </div>
+  </div>
+    </div>
+  </div>
 </div>

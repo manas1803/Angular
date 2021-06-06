@@ -23,6 +23,19 @@
 - [HostBinding](#hostbinding)
 - [Structural Directives](#structural-directives)
 
+## Services
+- [Why do we need Service](#why-do-we-need-service)
+- [Injecting Services](#injecting-services)
+- [Hierarchial Injector](#hierarchial-injector)
+- [Injecting Service in Service](#injecting-service-in-service)
+
+## Routing
+- [Why do we need Router](#why-do-we-need-router)
+- [Setting Up Routes](#setting-up-routes)
+- [Router Link](#router-link)
+- [Understanding Navigation Paths](#understanding-navigation-paths)
+- [Navigating Programmatically](#navigating-programmatically)
+- [Passing Parameters to Routes](#passing-parameters-to-routes)
 ---
 ## **What is Angular**
 
@@ -609,5 +622,204 @@ Then we follow some steps :-
 - Now we can use this directive as ***appUnless** in our HTML file
 
 [^Top](#directives)
+
+---
+
+## **Why do we need Service**
+We use @input and @Output to communicate between the components. But the problem with the approach is that when we need to communicate at a very complicate hierarchy then the code becomes very complicated.
+
+So to centralise the common things and communicate more efficiently we use service
+
+[^Top](#Services)
+
+---
+
+## **Injecting Services**
+In order to use services :-
+
+- First we create a normal ts class that we use as service
+- Naming convention is given as service
+- Then to use this service we need to inject this to the components where we want to use the service
+
+```Typescript
+import 'Service' from 'the service folder'
+
+export class Component
+{
+  constructor(private serviceVariable: Service){}
+}
+```
+Then we can use this service variable in the file.
+
+But we need to provide this service under the @Component
+
+```
+provider : [ServiceHere]
+```
+
+[^Top](#Services)
+
+---
+
+## **Hierarchial Injector**
+The concept is that if we want to use the same service everywhere then we need to inject and provide the service at he highest level component.
+
+In general if we want to use only one instance of a service everywhere we inject it at app.modules
+
+And suppose we want a different instance at any component or directive level then we can use the provider for that specific directive or component
+
+[^Top](#Services)
+
+---
+## **Injecting Service in Service**
+Sometime we need to inject a service inside the service.
+
+Now for components and directives we have there respective decorators which contains the provider where we can provide the service.
+
+But in case of Service we don't have any such decorator
+
+So we use a different decorator as
+> @Injectable()
+
+Now this decorator is used in the service file where the other service will get injected
+
+> In other words the end point of the service where the other service gets injected need to add this decorator
+
+[^Top](#Services)
+
+---
+
+## **Why do we need Router**
+When we create our application we want to navigate to different places from the single page.
+
+Now this can be achieved using other directives but the URL routing cannot.
+
+So in order to achieve that we use Routing.
+
+[^Top](#Routing)
+
+---
+
+## **Setting Up Routes**
+We need to setup the routes.
+- Angular routes are set up in the app.module because we are routing for whole app.
+- There we create a const variable containing the route datatype.
+
+```Typescript
+const appRoute:Routes = [];
+```
+- This data types expects an array of objects
+```Typescript
+const appRoute:Routes = [{},{}];
+```
+- That arrays object first key is path i.e. the path we want to navigate to and the second part is the component that we want to load to that specific path.
+```Typescript
+const appRoute:Routes = [{path:'path here',component : componentNameHere},{path:'path here',component : componentNameHere}];
+```
+
+- Now we have added the routes but we need to tell the angular that we are providing such routes to whole app.
+
+- Right now this variable is just in app modules.
+
+- So in app module inside @NgModule imports we import RouterModule
+
+```Typescript
+import  :[
+  RouterModule
+]
+```
+- This router module has various built in methods and we call the ForRoot method to pass the route 
+
+```Typescript
+import  :[
+  RouterModule.forRoot(appRoute)
+]
+```
+
+Now we have set up our Router
+
+[^Top](#Routing)
+
+---
+
+## **Router Link**
+After we set up the router now we can use the path to call the desired component.
+
+- For this we can simply call the path in the href section of the link.
+
+```HTML
+<a href = "pathofRoute">Path Name</a>
+```
+- But this method has a flaw. The issue is when we assign the value this way then each time we click on the link the page gets reloaded, message is sent to server and server sends a response and then we get the new component
+
+- So to avoid such unwanted calls to server there is directive provided by the angular to achieve the task
+
+- RouterLink. Using this directive we can avoid the reloading thing. This directive can be used in different ways. 
+
+- The way I am using is this 
+
+```HTML
+<a [routerLink] = "['path first part here']">Path Name</a>
+```
+- In the above method of using the routerLink each value inside the array constitutes each path part 
+
+[^Top](#Routing)
+
+---
+
+## **Understanding Navigation Paths**
+The concept here is of relative and absolute path.
+
+- In th routerLink when we provide / with path then we provide the absolute path, but when we provide nothing of such sort we give a relative path.
+
+- The relative path is measured according to the component from where we will be using route.
+
+- So need to take care while using the relative path
+
+[^Top](#Routing)
+
+---
+
+## **Navigating Programmatically**
+Using routerLink is a way to navigatethrough HTML.
+
+But suppose on click we want something to be done and after that we want to navigate then in that case we use the program side or ts side.
+
+- For this we need to first inject the route in the constructor
+```Typescript
+constructor(private routes:Router){}
+```
+- Now this route method we can use to navigate.
+
+```Typescript
+onClickButton(){
+  this.routes.navigate(path here);
+}
+```
+
+- Here we can mention the path in the same way as the routerLink
+
+#### **Relative Path Concept in such case**
+
+- We have the similar relative path concept just like routerLink
+- But the problem is 'this.routes' does not know in which route we are currently in.
+- So the problem is that even if you give a relative path in the route still it takes it as absolute.
+- So in order to make it work we need to pass the ActiavtedRoute
+
+```Typescript
+constructor(private routes:Router,private activeRoute:ActivatedRoutes){}
+```
+
+- Now this route contains all the information regarding the route, including at what position we currently are in.
+
+```Typescript
+onClickButton(){
+  this.routes.navigate('path here',{relativeTo:this.activeRoute});
+}
+```
+- The navigate method of route contains one more parameter that takes a javascript object.
+- Here there are various object we can use but for now we use relativeTo
+
+[^Top](#Routing)
 
 ---
