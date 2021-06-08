@@ -36,6 +36,13 @@
 - [Understanding Navigation Paths](#understanding-navigation-paths)
 - [Navigating Programmatically](#navigating-programmatically)
 - [Passing Parameters to Routes](#passing-parameters-to-routes)
+- [Fetching Route Parameters](#fetching-route-parameters)
+- [Passing Query Parameters and Fragments](#passing-query-parameters-and-fragments)
+- [Fetching Query Parameters and Fragment](#fetching-query-parameters-and-fragment)
+- [The Child Nesting Route](#the-child-nesting-route)
+- [Using The Query Parameters](#using-the-query-parameters)
+- [Redirecting and Wildcard Routes](#redirecting-and-wildcard-routes)
+- [Outsourcing the Route](#outsourcing-the-route)
 ---
 ## **What is Angular**
 
@@ -819,6 +826,267 @@ onClickButton(){
 ```
 - The navigate method of route contains one more parameter that takes a javascript object.
 - Here there are various object we can use but for now we use relativeTo
+
+[^Top](#Routing)
+
+---
+
+## **Passing Parameters to Routes**
+We sometimes want to pass some parameters also to the url and then we need to get the value from that url.
+If we want to pass the parameters in url we follow the simple steps :-
+
+- In the app modules where we have been adding the url part there we need to make changes
+- After the url part ':id'. This indicates that after the desired url we will get a parameter that we need to take care of
+- Constituting to this parameter we may call a Component in the appmodule
+
+```Typescript
+{path:'servers',component:ServersComponent,children:[
+    {path:':id',component:ServerComponent},
+    {path:':id/edit',component:EditServerComponent}
+  ]},
+```
+
+- Ignore the children part for now as we can see that we have :id written that means we will be able to handle the parameters
+
+- Then in the routerLink of frontened or the this.route.navigate part of ts file we mention the parameters as well.
+- This mentioning of parameters can be static or dynamic
+
+[^Top](#Routing)
+
+---
+
+## **Fetching Route Parameters**
+Now we have passed the parameters to the url but now we need to fetch those values.
+
+Doing that is very simple
+
+- In the constructor of the ts file inject ActivatedRoute
+- The Activated Route tells about the active route or url and hence reterieves all its data
+- In the activatedRoute we have a method snapshot which tells about the snapshot of the current route at that moment.
+- The snapshot in turn has the method of parameter which takes an object of the value you require.
+
+```Typescript
+constructor(private route:Router){}
+
+ngOninit(){
+  const id = this.route.snapshot.params['id'];
+}
+```
+
+- Now this snapshot method has one disadvantage with it.
+- If we reload the same page again from some link then also it will contain the same snapshot and suppose we changed the url after clicking the link, there will be no change in the snapshot
+
+- In that case we use another method using the observable.
+
+```Typescript
+this.route.params.subscribe(
+  (params)=>{
+    //do anything here
+  }
+)
+```
+The params we got here will be the latest one even after the reload.
+
+- There is a disadvantage with observable also, and that is performance
+
+- So in case if we know that there will be no such reload to change the parameters always go with snapshot otherwise observable.
+
+[^Top](#Routing)
+
+---
+
+## **Passing Query Parameters and Fragments**
+We sometimes want to pass some parameters also to the url and then we need to get the value from that url.
+If we want to pass the parameters in url we follow the simple steps :-
+
+- For frontend side code part after routerLink directive we have few other directives.
+- The first one is queryParams that contains our queryParameter
+- The second is fragment that contains the fragment part
+
+> Fragment is generally a part on the same page where we wish to go
+
+```HTML
+<a 
+[routerLink] = "['/servers','edit']"
+[queryParams] = "{allowEdit:'1'}"
+fragment = "loading"
+>Link
+</a>
+```
+
+- For the program side of the code we can achieve the same behaviour
+- Here like the previous case we use the router injected to our ts file
+- The router has navigate method which takes a url first and then an object.
+- In that object we can specify the queryParams and the fragment
+
+```Typescript
+constructor(private route:Router,private currentRoute:ActivatedRoute){}
+
+onClick(){
+  this.route.navigate("['servers']",{relativeTo:this.currentRoute,queryParams:{allowEdit:'1'},fragment:'loading'})
+}
+```
+
+[^Top](#Routing)
+
+---
+
+## **Fetching Query Parameters and Fragment**
+Just like in case of fetching the parameters same way we have 2 methods here
+
+- Using observable
+- Using Snapshot
+
+- The same procedure is followed expect the synatx is changed
+
+```Typescript
+constructor(private route:Router){}
+
+ngOninit(){
+  const queryParams = this.route.snapshot.queryParams['queryHere']
+  const fragment = this.route.snapshot.fragment
+}
+```
+
+- The second way using the observable is following
+
+```Typescript
+constructor(private route:Router){}
+
+ngOninit(){
+  this.route.queryParams.subscribe(
+    (params)=>{
+      const queryParameters = params
+    }
+  )
+  this.route.fragment.subscribe(
+    (params)=>{
+      const fragment = params
+    }
+  )
+}
+```
+
+[^Top](#Routing)
+
+---
+
+## **The Child Nesting Route**
+Now as we know that we might create children for a particular component so in that case we need to provide nesting in routing
+
+- Nesting in routing can simply be achieved by adding a new property children in the approute that we declare in appmodule
+
+- Now since we have given the children to the parents we now will have to provide path as relative
+- Also since this is done so whereever we were calling the component using selector there we call <router-outlet>
+
+```Typescript
+const appRoutes:Routes = [
+  {path:'', component:HomeComponent},
+  {path:'users', component:UsersComponent,children:[
+    {path:':id/:name', component:UserComponent}
+  ]},
+  {path:'servers',component:ServersComponent,children:[
+    {path:':id',component:ServerComponent},
+    {path:':id/edit',component:EditServerComponent}
+  ]},
+  {path:'not-found', component:PageNotFoundComponent},
+  {path:'**',redirectTo : '/not-found'}
+];
+```
+
+And in the html file where these components are called we need to call
+```HTML
+<router-outlet></router-outlet>
+```
+[^Top](#Routing)
+
+---
+
+## **Redirecting and Wildcard Routes**
+Now we have one issue in this routing situation.
+If we enter any random value in the url we will get error.For that we have not handled anything.
+
+Here we use the wildcard method and the redirect property
+
+- First we create a component that will output something in all such cases
+- Next in the app modules we give a path to this component inside the approutes for some url.
+- Next is the important part. Here we give the path as wildcard *.
+- The meaning of this is that all those places that we haven't mentioned in route will come under this.
+- Then in place of component we use redirectTo property that wants a url path and we mention the above path there
+
+```Typescript
+{path:'not-found', component:PageNotFoundComponent},
+  {path:'**',redirectTo : '/not-found'}
+```
+
+[^Top](#Routing)
+
+---
+## **Using The Query Parameters**
+Now we know how to work with parameters. We can add them whereever we require and manipulate the data accordingly
+- But there is one slight problem with that
+- Once we click on the new link the old queryParameters gets removed
+- And once they are removed the actiavtedRoute picks the new route and we does not get the desired result
+- So in order to maintain that while navigating in such a case programmatically in the navigate we need to add one property.
+- The navigate part will hold queryparamshandling and that has 2 values 
+ Merge and Preserve
+- With merge it merges the old params value in the new url with the new url params
+- With preserve it overides the new url with the params of old url
+
+```TypeScript
+this.route.navigate(['/servers','one parameter','second parameter'],{queryParamsHandling:'preserve'})
+```
+
+[^Top](#Routing)
+
+---
+
+## **Outsourcing the Route**
+Now since we have been adding so many data in same place for routing the issue is it gets complicated
+
+- So to avoid this we add the routing part in a single module
+- For that we create the module and add this const appRoutes there
+- Now in @NgModule Import part we add the RouterModule.ForRoot part of the code
+- Now we add export part also in this
+- In export we add the RouterModule
+- So now this const is getting exported
+- In our main app module file we add the Module in imports part
+
+```Typescript
+import { NgModule } from '@angular/core';
+import { Router, RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { EditServerComponent } from './servers/edit-server/edit-server.component';
+import { ServerComponent } from './servers/server/server.component';
+import { ServersComponent } from './servers/servers.component';
+import { UserComponent } from './users/user/user.component';
+import { UsersComponent } from './users/users.component';
+
+const appRoutes:Routes = [
+  {path:'', component:HomeComponent},
+  {path:'users', component:UsersComponent,children:[
+    {path:':id/:name', component:UserComponent}
+  ]},
+  {path:'servers',component:ServersComponent,children:[
+    {path:':id',component:ServerComponent},
+    {path:':id/edit',component:EditServerComponent}
+  ]},
+  {path:'not-found', component:PageNotFoundComponent},
+  {path:'**',redirectTo : '/not-found'}
+];
+
+
+@NgModule({
+  declarations: [],
+  imports: [
+    RouterModule.forRoot(appRoutes)
+  ],
+  exports:[RouterModule]
+})
+export class AppRoutingModule { }
+
+```
 
 [^Top](#Routing)
 
