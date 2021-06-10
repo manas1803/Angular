@@ -43,7 +43,13 @@
 - [Using The Query Parameters](#using-the-query-parameters)
 - [Redirecting and Wildcard Routes](#redirecting-and-wildcard-routes)
 - [Outsourcing the Route](#outsourcing-the-route)
+
+## Observables
+- [Observables Introduction](#observables-introduction)
+- [Building Custom Observables](#building-custom-observables)
+- [Subjects](#subjects)
 ---
+
 ## **What is Angular**
 
 Angular is simply a javascript framework designed so that we can create web pages on a single page (SPAs).
@@ -1089,5 +1095,65 @@ export class AppRoutingModule { }
 ```
 
 [^Top](#Routing)
+
+---
+
+## **Observables Introduction**
+Observables provide support for data sharing between publishers and subscribers in an angular application. It is referred to as a better technique for event handling, asynchronous programming, and handling multiple values as compared to techniques like promises.
+A special feature of Observables is that it can only be accessed by a consumer who subscribes to it i.e A function for publishing values is defined, but it is not executed by the subscribed consumer (it can be any component) only via which the customer can receive notifications till the function runs or till they subscribed.
+An observable can deliver multiple values of any type. The API for receiving values is the same in any condition and the setup and the logic are both handled by the observable. Rest thing is only about subscribing and unsubscribing the information required.
+
+[^Top](#Observables)
+
+---
+
+## **Building Custom Observables**
+We can create our own custom observables :-
+
+- First we have to import the rxjs which contains the Subscription and Interval methods.
+- Using interval we can create our own observable but if we want to create custom variables fully then we use the subscription method.
+- In that we create a subscription variable and assign it to Observable.create
+```Typescript
+private customObservable : Subscription;
+this.customObservable = Observable.create()
+```
+- Now this is a callback and inside this we get a parameter of observer.
+- The observer is basically it knows an event has occured and its just to check for the data.
+
+```Typescript
+private customObservable : Subscription;
+this.customObservable = Observable.create((observer)=>{
+  observer.next()
+})
+```
+- Any observable has 3 methods observer,error and completion
+- As name suggest for all  observer is the first one in which we observe the data, like in the case as mentioned.
+- Observer has many methods but we have used the next which calls the observer again and again.
+- Then we have error and in that we check for the error if exists and then that line is executed.
+```Typescript
+private customObservable : Subscription;
+this.customObservable = Observable.create((observer)=>{
+  observer.next()
+},(error)=>{
+  console.log(error);
+})
+```
+- In that callback function too we have the error paameter that we get.
+
+- Lastly we have completion which has no parameters. And on complete it stops the observable.
+
+```Typescript
+private customObservable : Subscription;
+this.customObservable = Observable.create((observer)=>{
+  observer.next()
+},(error)=>{
+  console.log(error);
+},()=>{
+  console.log("Completed");
+})
+```
+
+
+[^Top](#Observables)
 
 ---

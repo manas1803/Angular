@@ -29,4 +29,7 @@ export class RecipeDetailComponent implements OnInit {
   addIngredientsToShoppingList(e){
     this.recipeService.addIngredients(this.recipe.ingredients);
   }
+  onEditRecipe(event){
+    this.route.navigate(['edit'],{relativeTo:this.activeRoute});
+  }
 }
