@@ -1,0 +1,25 @@
+<form [formGroup]="formData" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <label>Student Id</label>
+        <input type="number" name="studentId" class="form-control" formControlName="studentId">
+    </div>
+    <div class="form-group">
+        <label>Student Name</label>
+        <input type="text" name="studentName" class="form-control" formControlName="studentName">
+    </div>
+    <div class="form-group" formGroupName="teacherData">
+        <div class="form-group">
+            <label>Teacher Name</label>
+            <input type="text" name="teacherName" class="form-control" formControlName="teacherName">
+        </div>
+        <div class="form-group">
+            <label>Teacher Subject</label>
+            <input type="text" name="teacherSubject" class="form-control" formControlName="teacherSubject">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Marks</label>
+        <input type="number" name="marks" class="form-control" formControlName="marks">
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+</form>

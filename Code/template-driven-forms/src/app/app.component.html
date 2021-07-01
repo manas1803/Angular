@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+        <form (ngSubmit) = "onSubmit()" #data = "ngForm">
+          <div id="user-data" ngModelGroup = "userData" #userData = "ngModelGroup">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" id="username" class="form-control" ngModel name="username" required #user = "ngModel" placeholder="username">
+              <span class="help-doc errorText" *ngIf = "!user.valid && user.touched">Username is a required field</span>
+            </div>
+            <button class="btn btn-default" type="button">Suggest an Username</button>
+            <div class="form-group">
+              <label for="email">Mail</label>
+              <input type="email" id="email" class="form-control" ngModel name="email" required email #email = "ngModel" placeholder="example@example.com">
+              <span class="help-block errorText" *ngIf = "!email.valid && email.touched">Please enter a valid Email!</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="secret">Secret Questions</label>
+            <select id="secret" class="form-control" [ngModel] = "defaultSelect" name="secret" required >
+              <option value="pet">Your first Pet?</option>
+              <option value="teacher">Your first teacher?</option>
+            </select>
+          </div>
+          <div>
+            <textarea name="questionAnswer" rows="3" [(ngModel)] = "answer" class="form-control"></textarea>
+            <p>Your reply is {{answer}}</p>
+          </div>
+          <div class="radio" *ngFor = "let gender of genders">
+            <label for="">
+              <input type="radio" [value] = "gender" name="gender" [ngModel] required>{{gender}}
+            </label>
+          </div>
+          <button class="btn btn-primary" type="submit" [disabled] = "!data.valid">Submit</button>
+        </form>
+        <div class="row" *ngIf = "submitted">
+          <div class="col-xs-12">
+            <h3>Your Data is {{ submitted }}</h3>
+            <p> Username :- {{ userDataForm.username }}</p>
+            <p> Email :- {{ userDataForm.email }}</p>
+            <p> Gender :- {{ userDataForm.gender }}</p>
+            <p> Secret question :- What was your first {{ userDataForm.question }}</p>
+            <p> Answer :- {{ userDataForm.answer }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>    
+</body>
+</html>

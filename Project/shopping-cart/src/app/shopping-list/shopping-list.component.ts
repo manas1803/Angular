@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
 import { ShoppingListService } from '../Services/shopping-list.service';
 
 import { Ingredient } from '../shared/ingredient.model';
@@ -10,6 +11,7 @@ import { Ingredient } from '../shared/ingredient.model';
 })
 export class ShoppingListComponent implements OnInit {
   ingredients: Ingredient[];
+  editShoppingList:Subject<number>;
 
   constructor(private shoppingService:ShoppingListService) { }
 
@@ -21,5 +23,8 @@ export class ShoppingListComponent implements OnInit {
         this.ingredients = ingrident;
       }
     )
+  }
+  onEditList(id:number){
+    this.shoppingService.editShoppingList.next(id);
   }
 }

@@ -1,0 +1,10 @@
+input.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched
+{
+    border: 1px solid rgb(235, 128, 128);
+}
+input.ng-valid.ng-touched,
+textarea.ng-valid.ng-touched
+{
+    border: 1px solid rgb(158, 238, 175);
+}

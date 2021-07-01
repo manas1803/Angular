@@ -48,6 +48,23 @@
 - [Observables Introduction](#observables-introduction)
 - [Building Custom Observables](#building-custom-observables)
 - [Subjects](#subjects)
+
+## Forms
+- [Forms Introduction](#forms-introduction)
+- [Creating the Forms and Registering Controls](#creating-the-forms-and-registering-controls)
+- [Adding Validation](#adding-validation)
+- [Using Form State](#using-form-state)
+- [Outputing Validation Error Message](#outputing-validation-error-message)
+- [Reactive Forms](#reactive-forms)
+- [Creating Reactive Forms](#creating-reactive-forms)
+
+## Http
+- [Post Request](#post-request)
+- [Get Request](#get-request)
+- [Transform Response Data](#transform-response-data)
+- [Setting Headers](#setting-headers)
+- [Setting Parameters](#setting-parameters)
+- [Setting Multiple Parameters](#setting-multiple-parameters)
 ---
 
 ## **What is Angular**
@@ -643,7 +660,7 @@ We use @input and @Output to communicate between the components. But the problem
 
 So to centralise the common things and communicate more efficiently we use service
 
-[^Top](#Services)
+[^Top](#services)
 
 ---
 
@@ -670,7 +687,7 @@ But we need to provide this service under the @Component
 provider : [ServiceHere]
 ```
 
-[^Top](#Services)
+[^Top](#services)
 
 ---
 
@@ -681,7 +698,7 @@ In general if we want to use only one instance of a service everywhere we inject
 
 And suppose we want a different instance at any component or directive level then we can use the provider for that specific directive or component
 
-[^Top](#Services)
+[^Top](#services)
 
 ---
 ## **Injecting Service in Service**
@@ -698,7 +715,7 @@ Now this decorator is used in the service file where the other service will get 
 
 > In other words the end point of the service where the other service gets injected need to add this decorator
 
-[^Top](#Services)
+[^Top](#services)
 
 ---
 
@@ -709,7 +726,7 @@ Now this can be achieved using other directives but the URL routing cannot.
 
 So in order to achieve that we use Routing.
 
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 
@@ -751,7 +768,7 @@ import  :[
 
 Now we have set up our Router
 
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 
@@ -776,7 +793,7 @@ After we set up the router now we can use the path to call the desired component
 ```
 - In the above method of using the routerLink each value inside the array constitutes each path part 
 
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 
@@ -789,7 +806,7 @@ The concept here is of relative and absolute path.
 
 - So need to take care while using the relative path
 
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 
@@ -833,7 +850,7 @@ onClickButton(){
 - The navigate method of route contains one more parameter that takes a javascript object.
 - Here there are various object we can use but for now we use relativeTo
 
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 
@@ -857,7 +874,7 @@ If we want to pass the parameters in url we follow the simple steps :-
 - Then in the routerLink of frontened or the this.route.navigate part of ts file we mention the parameters as well.
 - This mentioning of parameters can be static or dynamic
 
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 
@@ -897,7 +914,7 @@ The params we got here will be the latest one even after the reload.
 
 - So in case if we know that there will be no such reload to change the parameters always go with snapshot otherwise observable.
 
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 
@@ -933,7 +950,7 @@ onClick(){
 }
 ```
 
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 
@@ -973,7 +990,7 @@ ngOninit(){
 }
 ```
 
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 
@@ -1004,7 +1021,7 @@ And in the html file where these components are called we need to call
 ```HTML
 <router-outlet></router-outlet>
 ```
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 
@@ -1025,7 +1042,7 @@ Here we use the wildcard method and the redirect property
   {path:'**',redirectTo : '/not-found'}
 ```
 
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 ## **Using The Query Parameters**
@@ -1043,7 +1060,7 @@ Now we know how to work with parameters. We can add them whereever we require an
 this.route.navigate(['/servers','one parameter','second parameter'],{queryParamsHandling:'preserve'})
 ```
 
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 
@@ -1094,7 +1111,7 @@ export class AppRoutingModule { }
 
 ```
 
-[^Top](#Routing)
+[^Top](#routing)
 
 ---
 
@@ -1103,7 +1120,7 @@ Observables provide support for data sharing between publishers and subscribers 
 A special feature of Observables is that it can only be accessed by a consumer who subscribes to it i.e A function for publishing values is defined, but it is not executed by the subscribed consumer (it can be any component) only via which the customer can receive notifications till the function runs or till they subscribed.
 An observable can deliver multiple values of any type. The API for receiving values is the same in any condition and the setup and the logic are both handled by the observable. Rest thing is only about subscribing and unsubscribing the information required.
 
-[^Top](#Observables)
+[^Top](#observables)
 
 ---
 
@@ -1153,7 +1170,425 @@ this.customObservable = Observable.create((observer)=>{
 })
 ```
 
+[^Top](#observables)
 
-[^Top](#Observables)
+---
+
+## **Forms Introduction**
+Forms are basically the way of submitting the data to the server.
+- We use forms for various purposes. We want to submit the form. Login etc purposes.
+- For such reasons we have 2 types of form creation ways provided by the angular
+- The first one is template driven form. In that type of forms we have all the things predefined in a html template and all the changes are done there only. Its very simple and easy to implement method.
+The issue with the method is it does not provide much flexibility.
+- The second type we have Reactive Forms which are all coded in ts side of the file. The negative aspect is that they are complicated but the positive aspect is that they provide a more flexible approach.
+
+[^Top](#forms)
+
+---
+
+## **Creating the Forms and Registering Controls**
+
+We are creating abootstrap form for better design. The key take aways here will be :-
+
+- We need to add (ngSubmit) or (submit) at the top with form element. 
+- Now we create a temporary variable as #data that we add to Form tag.
+- Now this contains the value regarding the form
+- Next we want the data of the input fields and other values
+- So for that we add ngModel to all the elements that contains the data of the form
+- Then using the tag value of name we give some name to that element also.
+- Now last thing since we are submitting the form then this ngSubmit should call some function
+- Also if we pass the #data temp variable that has data with html elements but here we want form data
+- So for that we have directive the ngForm, so we make this temp variable equal to that in the same tag.
+
+```HTML
+<form (ngSubmit) = "onSubmit(data)" #data = "ngForm">
+<label>UserName</label>
+<input type="text" ngModel name="username">
+
+<label>Email</label>
+<input type="text" ngModel name = "email">
+
+<button type="submit"> Submit</button>
+</form>
+```
+
+Now in ts file we can use this temp variable.
+
+We can also use the ViewChild to get the data.
+
+```HTML
+<form (ngSubmit) = "onSubmit()" #data = "ngForm">
+<label>UserName</label>
+<input type="text" ngModel>
+
+<label>UserName</label>
+<input type="text" ngModel>
+
+<button type="submit"> Submit</button>
+</form>
+```
+
+```TypeScript
+@ViewChild('data',{static:false})signUpFormdata:NgForm;
+  suggestUserName() {
+    const suggestedName = 'Superuser';
+  }
+  onSubmit(){
+    console.log(this.signUpFormdata);
+  }
+```
+[^Top](#forms)
+
+---
+
+## **Adding Validation**
+- We can add validation to our form by just adding simple html things
+- For email just add email keyword in the tag element.
+- For required we add required keyword.
+- Now if you submit the form you will see that the valid part of form shows false if any validity is not matched
+
+[^Top](#forms)
+
+---
+## **Using Form State**
+- We have different form states and those we can use to make our form look better
+- We have pristine, dirty, touched, untouched,valid and invalid
+- We already know what they mean so for any element if we have added validity to it we get these form states.
+- Now what we can do is if the form is touched and if validity is false then we can simply make the border of that input box red otherwise green.
+- Similarly we can disable the submit button if the validity is false.
+
+```HTML
+<div class="form-group">
+              <label for="email">Mail</label>
+              <input type="email" id="email" class="form-control" ngModel name="email" required email #email = "ngModel" placeholder="example@example.com">
+              <span class="help-block errorText" *ngIf = "!email.valid && email.touched">Please enter a valid Email!</span>
+            </div>
+```
+
+In the span part here we can see how we used the form states
+
+[^Top](#forms)
+
+---
+## **Outputing Validation Error Message**
+
+We can output the error message also in the form state.
+- Now since we know the states of the form we can use that to print the error message
+- We can create an element and then add a condition using the state.
+- The conditions we can add are like 
+
+```HTML
+<p *ngIf = "dataForm.touched && !dataForm.valid">Please Enter the valid entry</p>
+```
+
+- Also sometimes we need to add some error messages too along with the styling.
+- But we want to add those spans only when invalid and touched.
+- So for that a very simple method is to use a temp variable inside the tag element and make it equal to ngModel so that we can get the desired result.
+
+```HTML
+<input type="email" id="email" class="form-control" ngModel name="email" required email #email = "ngModel" placeholder="example@example.com">
+              <span class="help-block errorText" *ngIf = "!email.valid && email.touched">Please enter a valid Email!</span>
+```
+
+>We can reset the form by using NgForm.Form.Reset() method 
+
+[^Top](#forms)
+
+---
+
+## **Reactive Forms**
+The previous approach that we studied about was Template driven approach and in that we do all the thing in the template html side.
+
+In reactive approach we add the whole form in ts file side and add all validations also there only.
+
+[^Top](#forms)
+
+---
+## **Creating Reactive Forms**
+The main concept in reactive forms is that we right the code in the ts file.
+Steps are :- 
+
+- First we add ReactiveForms Module in appmodule
+- Next we create a normal form template and in html
+- Then we create a new variable of formGroup
+- We create this formGroup and this formGroup takes a javascript object of key value pair
+- The key is simply the name value we used to add in element tag in template driven approach
+- The value is a new FormControl which further takes values(constructor overload) with arguments of default value and Validations
+- The validations are added inside an array.
+
+- This whole code approach is what added in the ts file.
+```TypeScript
+export class ReactiveFormComponent implements OnInit {
+
+  constructor() { }
+  formData:FormGroup;
+  ngOnInit() 
+  {
+    this.formData = new FormGroup({
+      "studentId" : new FormControl(null,[Validators.required]),
+      "studentName" : new FormControl(null,[Validators.required]),
+      "marks" : new FormControl(null,[Validators.required,Validators.maxLength(3),Validators.minLength(1)])
+    });
+  }
+  onSubmit(){
+    console.log(this.formData);
+  }
+
+}
+```
+
+- Now lets talk about the html file
+- In the html file we add the code as follows.
+- First we create a form with a button.
+- Remember to import the reactive forms module
+- Then we add the button with type submit
+- Also for the form element we add a property of [formGroup] = "the variable assigned in ts file"
+- Then in each tag element we give them the name as we have given in the formcontrol.
+- The tag we use here is [formControlName] = "'name given here'"
+
+> Note here we can omit both the single inverted commas and the square brackets
+So it becomes formControlName = "name given"
+- This way we sync the ts code with form and we can get data easily in this case directly in ts file.
+```HTML
+<form [formGroup] = "formData" (ngSubmit) = "onSubmit()">
+        <div class="form-group">
+            <label>Student Id</label>
+            <input 
+            type="number" 
+            name="studentId" 
+            class="form-control"
+            formControlName = "studentId">
+        </div>
+        <div class="form-group">
+            <label>Student Name</label>
+            <input 
+            type="text" 
+            name="studentName" 
+            class="form-control"
+            formControlName = "studentName">
+        </div>
+        <div class="form-group">
+            <label>Marks</label>
+            <input 
+            type="number" 
+            name="marks" 
+            class="form-control"
+            formControlName = "marks">
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+</form>
+```
+
+Now in template driven approach when we had to add a new span for adding some message like invalid username or something like that then we could simply use the temp variable for data and ngModel
+
+But here in reactive approach out data is there in ts file so to get data we simply use the formGroup and get method 
+```HTML
+<span class="help-doc" *ngIf = "signupForm.get('userData.username').errors['required'] && signupForm.get('userData.username').touched">Please enter a username!</span>
+```
+> Here as you can see we are using dataForm.get('Key Value Here')
+
+- Sometimes we need to add formGroup for 2 or more forms so in that case we add further forms Control value inside the ts code.
+Eg-
+```Typescript
+ngOnInit() 
+  {
+    this.formData = new FormGroup({
+      "studentId" : new FormControl(null,[Validators.required]),
+      "studentName" : new FormControl(null,[Validators.required]),
+      "teacherData" : new FormGroup({
+        "teacherName" : new FormControl(null),
+        "teacherSubject" : new FormControl(null)
+      }),
+      "marks" : new FormControl(null,[Validators.required,Validators.maxLength(3),Validators.minLength(1)])
+    });
+  }
+```
+Here you can see we have added the form group again for teachers and HTML part of the code is
+```HTML
+<div class="form-group" formGroupName="teacherData">
+        <div class="form-group">
+            <label>Teacher Name</label>
+            <input type="text" name="teacherName" class="form-control" formControlName="teacherName">
+        </div>
+        <div class="form-group">
+            <label>Teacher Subject</label>
+            <input type="text" name="teacherSubject" class="form-control" formControlName="teacherSubject">
+        </div>
+    </div>
+```
+
+> There are some more important things in reactive forms like creating your own validations, FormArray etc.
+
+[^Top](#forms)
+
+---
+
+## **Post Request**
+Now we are in the section of sending requests from our angular app
+- The first part is to send the post request
+- The first step in that direction is to add the HttpClientModule in our app module and then add its reference.
+- Then in the service of the component that has all the data we use dependency injection to add the HttpClient
+- Once we have the http client variable we use it to make the required call
+
+```TypeScript
+constructor(private http:HttpClient){}
+
+postMethodHere(){
+  return this.http.post<Datatype here>("api endpoint here","data here");
+}
+```
+Now in this method we have 3 things to take closer look at
+
+#### **DataType**
+The datatype is basically the data of the response that we will receive after we hit the endpoint
+
+#### **Api Endpoint Here**
+The api endpoint is basically the url that we will use.
+
+#### **Data**
+The data is basically the data we wish to post
+
+Now if we check the return type of this method is a observable which we need to subscribe
+
+> We generally don't subscribe the http request in service because then we cannot do anything with the data we are getting so generally its done in some other ts file which calls this service but that doesn't mean we cannot do that here
+
+So in some other TS file
+
+```TypeScript
+onSubmitData(){
+  this.service.postMethodHere().subscribe(response=>{
+
+  },error=>{
+
+  });
+}
+```
+
+[^Top](#http)
+
+---
+
+## **Get Request**
+Get request is very much similar to the post request just one change in get request we don't have another argument for data as we are not sending any data
+
+```TypeScript
+constructor(private http:HttpClient){}
+
+getMethodHere(){
+  return this.http.post<Datatype here>("api endpoint here");
+}
+```
+
+```TypeScript
+onGettingData(){
+  this.service.getMethodHere().subscribe(response=>{
+
+  },error=>{
+
+  });
+}
+```
+
+[^Top](#http)
+
+---
+
+## **Transform Response Data**
+We can also transform the response data using the pipes.
+The method simply uses the pipes method call which inreturn takes in various functions like map,tap etc 
+
+We can use those functions to filter the response data before we actually can use it
+
+```TypeScript
+return this.http.delete(this.apiUrl).pipe(tap(eventsObserved=>{
+      if(eventsObserved.type===HttpEventType.Sent){
+        console.log("Data is sent");
+      }
+      else if(eventsObserved.type===HttpEventType.Response)
+      console.log("Data received");
+    }));
+```
+
+Here we used tap we can also use map
+
+> Tap uses the HttpEventType and hence we are using that here
+
+
+[^Top](#http)
+
+---
+
+## **Setting Headers**
+Now we have seen that we can send the http get,post and delete requests using httpclient.
+
+Now we can add various things while sending such requests. These include header,parameters,response type etc.
+
+First we will see headers.
+
+- For setting headers actually in http.get() or any other such method we have been using, there is one last argument for the same purpose.
+
+- The last argument takes in a javascript object.
+- Inside that object we have keys as header,params,responsetype etc.
+- For headers we use key header and then create a new instance of HttpHeader which is imported from common/http
+- Then we can add any header of our choice there as this instance itself expects a javascript object
+
+```TypeScript
+constructor(private http:HttpClientModule){}
+
+postMethodHere(){
+  this.http.post<>("url",data,{
+    headers: new HttpHeader({"custom-header":"myHeader"})
+  })
+}
+```
+
+
+[^Top](#http)
+
+---
+
+## **Setting Parameters**
+After the headers the other thing that we can set is parameters
+- For parameters in the same object as we added headers we add the key params.
+- Now this key takes value differently.
+- For this we create an instance of HttpParams and then that instance further calls a set method
+- Inside this set method we specify our parameter in inverted commas and its value
+
+```TypeScript
+constructor(private http:HttpClientModule){}
+
+postMethodHere(){
+  this.http.post<>("url",data,{
+    headers: new HttpHeader({"custom-header":"myHeader"}),
+    params : new HttpParams().set("key","value")
+  })
+}
+```
+
+[^Top](#http)
+
+---
+
+## **Setting Multiple Parameters**
+We can set up multiple parameters also but for that we need to make use of the append keyword and also we need to initialize all those parametrs in a different variable.
+
+- For this we create a variable of type HttpParams()
+- There we set the parameters and then we use the append keyword to append further parameters
+
+```TypeScript
+constructor(private http:HttpClientModule){}
+
+postMethodHere(){
+  let paramsForPost = new HttpParams();
+  paramsForPost = paramsForPost.append("key1","value1");
+  paramsForPost = paramsForPost.append("key2","value2")
+  this.http.post<>("url",data,{
+    headers: new HttpHeader({"custom-header":"myHeader"}),
+    params : paramsForPost
+  })
+}
+```
+
+[^Top](#http)
 
 ---
